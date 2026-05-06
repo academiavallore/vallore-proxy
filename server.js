@@ -9,7 +9,7 @@ const cors    = require('cors');
 const fetch   = (...args) => import('node-fetch').then(({default: f}) => f(...args));
 
 const app  = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const AGENCY_KEY = process.env.GHL_AGENCY_KEY || '';
 const GHL_BASE   = 'https://services.leadconnectorhq.com';
