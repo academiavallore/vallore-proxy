@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vallore · Panel de Gestión</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cardo:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ── Paleta Vallore · modo claro ── */
+  --bg:#f6f6f6;           /* off-white — fondo principal (brandbook) */
+  --bg2:#eeeeea;          /* off-white oscuro — secciones */
+  --burg:#441728;         /* burgundy primario — nav, cards destacadas */
+  --burg2:#5a1e34;        /* burgundy medio */
+  --burg3:#6e2540;        /* burgundy claro — accents */
+  --cream:#dddaba;        /* crema — acento decorativo, fondos secundarios */
+  --cream2:#c8c4a0;       /* crema oscuro */
+  --black:#1a1a1a;        /* texto principal sobre fondo claro */
+  --text:#2a1a1f;         /* texto oscuro con tinte burgundy */
+  --text2:#5a3a45;        /* texto secundario */
+  --red:#b01a1c;          /* rojo Vallore — CTAs, alertas */
+  --red2:#8a1214;         /* rojo oscuro */
+  --positive:#4a7a30;     /* verde oliva oscuro — legible sobre blanco */
+  --positive2:#6a9a50;
+  --warn:#8a6a20;         /* dorado oscuro — legible sobre blanco */
+  --neutral:#6a6a6a;
+  --muted:#9a8a90;        /* texto muted — contraste sobre #f6f6f6 */
+  --border:rgba(68,23,40,.12);  /* bordes suaves burgundy */
+  --border2:rgba(68,23,40,.06);
+  --card:#ffffff;         /* blanco puro — cards */
+  --card-hover:#fdfcfa;   /* card hover */
+  --shadow:0 1px 4px rgba(68,23,40,.08), 0 4px 16px rgba(68,23,40,.05);
+  --shadow-h:0 2px 8px rgba(68,23,40,.14), 0 8px 24px rgba(68,23,40,.08);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Cardo',Georgia,serif;
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ── NAV — burgundy sólido, contraste máximo ── */
+nav{
+  position:sticky;top:0;z-index:300;
+  display:flex;align-items:center;
+  padding:0 40px;height:58px;
+  background:var(--burg);
+  border-bottom:1px solid rgba(68,23,40,.4);
+  box-shadow:0 2px 12px rgba(68,23,40,.25);
+}
+.logo{
+  font-family:'Playfair Display',serif;font-style:italic;font-size:19px;
+  color:var(--cream);letter-spacing:-0.066em;margin-right:28px;white-space:nowrap;
+}
+.logo em{opacity:.5;font-style:normal;}
+.ntabs{display:flex;gap:2px;flex:1;}
+.ntab{
+  padding:6px 15px;border-radius:20px;border:none;background:transparent;
+  color:rgba(221,218,186,.55);font-family:'Cardo',serif;font-size:12px;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.ntab:hover{color:var(--cream);background:rgba(221,218,186,.1);}
+.ntab.on{background:rgba(221,218,186,.18);color:var(--cream);border:1px solid rgba(221,218,186,.25);}
+.nav-r{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.sel{
+  background:rgba(221,218,186,.12);border:1px solid rgba(221,218,186,.25);border-radius:20px;
+  padding:5px 13px;color:var(--cream);font-family:'Cardo',serif;font-size:12px;outline:none;cursor:pointer;
+}
+.sel option{background:var(--burg);color:var(--cream);}
+.dot{width:6px;height:6px;border-radius:50%;background:#a8c98a;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(168,201,138,.5);}50%{box-shadow:0 0 0 5px rgba(168,201,138,0);}}
+
+/* ── PAGES ── */
+.pg{display:none;padding:26px 40px 64px;max-width:1500px;margin:0 auto;}
+.pg.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── PERIOD FILTER BAR ── */
+.period-bar{
+  display:flex;align-items:center;gap:3px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:3px 5px;
+  box-shadow:var(--shadow);
+}
+.pb{
+  padding:5px 13px;border-radius:18px;border:none;background:transparent;
+  color:var(--muted);font-family:'Cardo',serif;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.pb:hover{color:var(--text);background:var(--bg2);}
+.pb.on{background:var(--burg);color:var(--cream);}
+
+/* ── TYPOGRAPHY ── */
+.pg-h{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:2px;color:var(--burg);}
+.pg-s{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:22px;}
+.sh{
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--text);
+  padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sh small{font-size:11px;color:var(--muted);font-weight:400;font-style:italic;}
+
+/* ── GRIDS ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px;}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:16px;}
+
+/* ── CARD ── */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:20px 18px;position:relative;overflow:hidden;
+  animation:fadeUp .45s ease both;
+  box-shadow:var(--shadow);transition:box-shadow .2s,border-color .2s;
+}
+.card:hover{box-shadow:var(--shadow-h);border-color:rgba(68,23,40,.2);}
+
+/* Card variantes */
+.card.gold-c{
+  border-color:rgba(68,23,40,.18);
+  background:linear-gradient(140deg,#fff 0%,rgba(221,218,186,.15) 100%);
+}
+.card.burg-c{
+  background:var(--burg);border-color:transparent;
+  color:var(--cream);
+  box-shadow:0 4px 20px rgba(68,23,40,.3);
+}
+.card.red-c{
+  border-color:rgba(176,26,28,.2);
+  background:linear-gradient(140deg,rgba(176,26,28,.04) 0%,#fff 100%);
+}
+.card.green-c{
+  border-color:rgba(74,122,48,.2);
+  background:linear-gradient(140deg,rgba(74,122,48,.04) 0%,#fff 100%);
+}
+.card.cream-c{
+  border-color:rgba(68,23,40,.15);
+  background:linear-gradient(140deg,rgba(221,218,186,.25) 0%,#fff 100%);
+}
+.card.iva-c{
+  border-color:rgba(138,106,32,.2);
+  background:linear-gradient(140deg,rgba(201,169,110,.06) 0%,#fff 100%);
+}
+
+/* KPI card text */
+.clbl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
+.cval{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:6px;color:var(--text);}
+.cval .cur{font-size:14px;color:var(--burg);opacity:.7;font-weight:400;margin-right:1px;}
+/* On dark burg card */
+.card.burg-c .cval{color:var(--cream);}
+.card.burg-c .cval .cur{color:var(--cream);opacity:.6;}
+.card.burg-c .clbl{color:rgba(221,218,186,.55);}
+.card.burg-c .cnote{color:rgba(221,218,186,.6);}
+.card.burg-c .ctr.up,.card.burg-c .ctr.dn{color:rgba(221,218,186,.8);}
+
+.ctr{font-size:11px;}
+.up{color:var(--positive);}
+.dn{color:var(--red);}
+.cnote{font-size:11px;color:var(--muted);font-style:italic;margin-top:3px;}
+
+/* ── HORIZONTAL BAR ── */
+.hbars{display:flex;flex-direction:column;gap:9px;}
+.hrow{display:flex;align-items:center;gap:8px;}
+.hn{font-size:12px;color:var(--text);min-width:115px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ht{flex:1;height:6px;background:rgba(68,23,40,.08);border-radius:3px;overflow:hidden;}
+.hf{height:100%;border-radius:3px;transition:width .9s ease;}
+.hv{font-size:11px;font-family:'Playfair Display',serif;color:var(--text);}
+
+/* ── STRIP TABLE ── */
+.strip-wrap{overflow-x:auto;}
+table.strip{min-width:820px;border-collapse:collapse;width:100%;}
+table.strip th{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  padding:0 6px 10px;text-align:center;font-family:'Cardo',serif;font-weight:400;
+  border-bottom:1px solid var(--border);}
+table.strip th:first-child{text-align:left;}
+table.strip td{padding:7px 6px;text-align:center;vertical-align:middle;font-size:13px;
+  border-bottom:1px solid var(--border2);}
+table.strip td:first-child{text-align:left;font-family:'Playfair Display',serif;font-size:12px;
+  font-style:italic;color:var(--muted);white-space:nowrap;}
+.strip tr:hover td{background:rgba(68,23,40,.03);}
+.strip tr.cur td{background:rgba(68,23,40,.06);}
+.strip tr.cur td:first-child{color:var(--burg);font-weight:600;}
+.tv{font-family:'Playfair Display',serif;color:var(--text);}
+
+/* ── HEATMAP ── */
+.mheat{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-bottom:18px;}
+.mh-cell{border-radius:10px;padding:10px 8px;text-align:center;
+  border:1px solid var(--border);background:var(--card);
+  cursor:default;transition:transform .15s;box-shadow:var(--shadow);}
+.mh-cell:hover{transform:scale(1.04);box-shadow:var(--shadow-h);}
+.mh-m{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.mh-fac{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--burg);}
+.mh-g{font-size:10px;margin-top:3px;color:var(--red);}
+.mh-b{font-size:11px;font-family:'Playfair Display',serif;margin-top:4px;}
+svg.spark{width:100%;height:44px;display:block;}
+
+/* ── EXPENSE TABLE ── */
+.exp-tbl{width:100%;border-collapse:collapse;}
+.exp-tbl th{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  padding:0 8px 8px;text-align:left;border-bottom:1px solid var(--border);}
+.exp-tbl td{padding:6px 8px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.exp-tbl tr:hover td{background:rgba(68,23,40,.025);}
+.exp-sel{background:var(--bg2);border:1px solid var(--border);border-radius:7px;
+  padding:4px 6px;color:var(--text);font-family:'Cardo',serif;font-size:11px;outline:none;width:100%;}
+.exp-sel option{background:#fff;color:var(--text);}
+.exp-in{background:#fff;border:1px solid var(--border);border-radius:7px;
+  padding:4px 7px;color:var(--text);font-family:'Cardo',serif;font-size:12px;outline:none;width:100%;transition:border-color .2s;}
+.exp-in:focus{border-color:var(--burg);outline:none;}
+.exp-num{background:#fff;border:1px solid var(--border);border-radius:7px;
+  padding:4px 6px;color:var(--text);font-family:'Playfair Display',serif;font-size:13px;font-weight:700;
+  outline:none;width:90px;text-align:right;transition:border-color .2s;}
+.exp-num:focus{border-color:var(--burg);}
+.exp-pct{background:#fff;border:1px solid var(--border);border-radius:7px;
+  padding:4px 5px;color:var(--text);font-family:'Playfair Display',serif;font-size:12px;
+  outline:none;width:60px;text-align:right;transition:border-color .2s;}
+.exp-pct:focus{border-color:var(--burg2);}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;
+  padding:2px 5px;transition:color .2s;border-radius:4px;}
+.del-btn:hover{color:var(--red);background:rgba(176,26,28,.08);}
+.add-btn{
+  background:transparent;border:1px dashed rgba(68,23,40,.25);border-radius:8px;
+  color:var(--burg2);font-family:'Cardo',serif;font-size:12px;cursor:pointer;
+  padding:7px 14px;transition:all .2s;width:100%;margin-top:8px;
+}
+.add-btn:hover{background:rgba(68,23,40,.05);border-color:var(--burg);}
+.tot-row{margin-top:10px;padding:11px 14px;background:var(--burg);
+  border-radius:9px;display:flex;justify-content:space-between;align-items:center;}
+.tot-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(221,218,186,.7);}
+.tot-val{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);}
+
+/* ── IVA / IRPF PANEL ── */
+.tax-panel{margin-top:12px;border-radius:10px;border:1px solid var(--border);
+  background:#fff;overflow:hidden;box-shadow:var(--shadow);}
+.tax-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
+  border-bottom:1px solid var(--border2);font-size:13px;}
+.tax-row:last-child{border:none;}
+.tax-lbl{color:var(--text2);}
+.tax-val{font-family:'Playfair Display',serif;font-weight:700;color:var(--text);}
+.tax-title{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);
+  padding:7px 14px 5px;background:rgba(201,169,110,.08);border-bottom:1px solid var(--border2);}
+.tax-result{background:var(--burg);padding:10px 14px;font-size:13px;
+  display:flex;justify-content:space-between;align-items:center;}
+.tax-result-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);}
+
+/* ── CAT CHART ── */
+.ccat{display:flex;flex-direction:column;gap:9px;}
+.ccat-row{display:flex;align-items:center;gap:8px;}
+.ccat-ic{font-size:13px;width:20px;text-align:center;flex-shrink:0;}
+.ccat-nm{font-size:12px;min-width:95px;color:var(--text);}
+.ccat-tr{flex:1;height:7px;background:rgba(68,23,40,.07);border-radius:4px;overflow:hidden;}
+.ccat-fl{height:100%;border-radius:4px;transition:width .9s ease;}
+.ccat-vl{font-family:'Playfair Display',serif;font-size:12px;min-width:60px;text-align:right;color:var(--text);}
+.ccat-pc{font-size:10px;color:var(--muted);min-width:30px;text-align:right;}
+
+/* ── WORKER GRID ── */
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.wcard{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:18px 16px;animation:fadeUp .45s ease both;
+  box-shadow:var(--shadow);transition:box-shadow .2s,border-color .2s;}
+.wcard:hover{box-shadow:var(--shadow-h);border-color:rgba(68,23,40,.2);}
+.wav{width:38px;height:38px;border-radius:50%;background:var(--burg);
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-style:italic;font-size:16px;color:var(--cream);flex-shrink:0;}
+.wname{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--burg);}
+.wrole{font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:1px;}
+.wst{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;
+  border-bottom:1px solid var(--border2);}
+.wst:last-of-type{border:none;}
+.wst-l{color:var(--muted);}
+.wst-v{font-family:'Playfair Display',serif;color:var(--text);}
+
+/* ── WORKER DETAIL EXPAND ── */
+.w-expand-btn{
+  width:100%;margin-top:12px;padding:7px;background:rgba(68,23,40,.05);
+  border:1px solid var(--border);border-radius:8px;cursor:pointer;
+  color:var(--burg2);font-family:'Cardo',serif;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;transition:all .2s;text-align:center;
+}
+.w-expand-btn:hover{background:rgba(68,23,40,.1);color:var(--burg);}
+.w-detail{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
+.w-detail.vis{display:block;}
+
+/* ── RENT METER ── */
+.rent-track{height:10px;background:rgba(68,23,40,.08);border-radius:5px;overflow:hidden;margin:7px 0 5px;}
+.rent-fill{height:100%;border-radius:5px;transition:width 1s ease;}
+.rent-badge{font-size:12px;padding:6px 10px;border-radius:8px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.rb-ok{background:rgba(74,122,48,.08);border:1px solid rgba(74,122,48,.25);color:var(--positive);}
+.rb-warn{background:rgba(138,106,32,.08);border:1px solid rgba(138,106,32,.25);color:var(--warn);}
+.rb-bad{background:rgba(176,26,28,.07);border:1px solid rgba(176,26,28,.22);color:var(--red);}
+.rb-num{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;}
+
+/* ── OBJ CARD ── */
+.ocard{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:20px 18px;margin-bottom:14px;animation:fadeUp .45s ease both;box-shadow:var(--shadow);}
+.ocard-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.otitle{font-family:'Playfair Display',serif;font-size:15px;color:var(--burg);}
+.odesc{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;}
+.sbadge{padding:4px 12px;border-radius:14px;font-size:11px;}
+.sb-ok{background:rgba(74,122,48,.1);border:1px solid rgba(74,122,48,.3);color:var(--positive);}
+.sb-warn{background:rgba(138,106,32,.1);border:1px solid rgba(138,106,32,.3);color:var(--warn);}
+.sb-bad{background:rgba(176,26,28,.08);border:1px solid rgba(176,26,28,.25);color:var(--red);}
+.onums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.onum{background:var(--bg2);border-radius:9px;padding:12px 14px;border:1px solid var(--border);}
+.onum-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.onum-v{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);}
+.onum-n{font-size:10px;color:var(--muted);margin-top:2px;}
+.otrack{height:10px;background:rgba(68,23,40,.08);border-radius:5px;overflow:hidden;margin-bottom:7px;}
+.ofill{height:100%;border-radius:5px;transition:width 1s ease;}
+.ok-f{background:linear-gradient(90deg,var(--positive),rgba(74,122,48,.4));}
+.warn-f{background:linear-gradient(90deg,var(--warn),rgba(138,106,32,.4));}
+.bad-f{background:linear-gradient(90deg,var(--red),rgba(176,26,28,.4));}
+.oxlbls{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:9px;}
+.oadvice{padding:10px 14px;background:rgba(68,23,40,.05);border-left:3px solid var(--burg);
+  border-radius:0 8px 8px 0;font-size:12px;font-style:italic;line-height:1.6;color:var(--text2);}
+
+/* ── SERVICIOS PAGE ── */
+.svc-note{background:rgba(68,23,40,.05);border-left:3px solid var(--burg);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:12px;font-style:italic;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.svc-table{width:100%;border-collapse:collapse;}
+.svc-table th{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  padding:0 10px 10px;text-align:left;border-bottom:1px solid var(--border);font-family:'Cardo',serif;font-weight:400;}
+.svc-table th.r{text-align:right;}
+.svc-table td{padding:9px 10px;border-bottom:1px solid var(--border2);font-size:13px;vertical-align:middle;}
+.svc-table td.r{text-align:right;font-family:'Playfair Display',serif;}
+.svc-table tr:hover td{background:rgba(68,23,40,.025);}
+.svc-table tr.svc-total td{background:var(--burg);color:var(--cream);font-weight:700;font-family:'Playfair Display',serif;}
+.svc-table tr.svc-total td.r{font-family:'Playfair Display',serif;}
+.svc-avatar{width:30px;height:30px;border-radius:50%;background:var(--burg);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-style:italic;font-size:12px;
+  color:var(--cream);flex-shrink:0;vertical-align:middle;margin-right:8px;}
+.svc-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:14px;font-family:'Playfair Display',serif;}
+.svc-badge.s{background:rgba(68,23,40,.09);color:var(--burg);}
+.svc-badge.p{background:rgba(74,122,48,.1);color:var(--positive);}
+.svc-tab-row{display:flex;gap:6px;margin-bottom:14px;}
+.svc-tab{font-size:12px;padding:5px 15px;border-radius:18px;cursor:pointer;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:'Cardo',serif;transition:all .18s;}
+.svc-tab:hover{color:var(--text);background:var(--bg2);}
+.svc-tab.on{background:var(--burg);color:var(--cream);border-color:transparent;}
+.visit-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(68,23,40,.06);
+  border-radius:12px;padding:3px 9px;font-size:11px;color:var(--burg2);}
+
+/* ── CONTROLS ROW ── */
+.ctrls{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){.g4,.g5{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1000px){.g4,.g5{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.wgrid{grid-template-columns:repeat(2,1fr);}.mheat{grid-template-columns:repeat(6,1fr);}.onums{grid-template-columns:1fr 1fr;}}
+@media(max-width:660px){.g4,.g5,.g3,.g2{grid-template-columns:1fr 1fr;}.wgrid{grid-template-columns:1fr;}.ntabs{display:none;}.mheat{grid-template-columns:repeat(4,1fr);}nav,.pg{padding-left:14px;padding-right:14px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><strong>Vallore</strong><em> · </em>Panel de Gestión</div>
+  <div class="ntabs">
+    <button class="ntab on"  onclick="goPage('resumen',this)">📊 Resumen</button>
+    <button class="ntab" onclick="goPage('servicios',this)">✂️ Servicios & Citas</button>
+    <button class="ntab" onclick="goPage('gastos',this)">💸 Gastos</button>
+    <button class="ntab" onclick="goPage('evolucion',this)">📈 Evolución</button>
+    <button class="ntab" onclick="goPage('trabajadoras',this)">👤 Trabajadoras</button>
+    <button class="ntab" onclick="goPage('objetivos',this)">🎯 Objetivos</button>
+  </div>
+  <div class="nav-r">
+    <select class="sel" id="salonPick" onchange="changeSalon()">
+      <option value="">Cargando salones…</option>
+    </select>
+    <span class="dot"></span>
+  </div>
+</nav>
+
+<!-- ═══ P1 RESUMEN ═══ -->
+<div class="pg on" id="p-resumen">
+  <div class="ctrls">
+    <div><div class="pg-h">Resumen del Salón</div><div class="pg-s" id="res-sub">Salon Élite</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select class="sel" id="resMon" onchange="renderResumen()">
+        <option value="4">Mayo</option><option value="3">Abril</option>
+        <option value="2">Marzo</option><option value="1">Febrero</option><option value="0">Enero</option>
+      </select>
+      <div class="period-bar" id="res-pb">
+        <button class="pb" onclick="setPeriod('res',this,'dia')">Día</button>
+        <button class="pb" onclick="setPeriod('res',this,'semana')">Semana</button>
+        <button class="pb on" onclick="setPeriod('res',this,'mes')">Mes</button>
+        <button class="pb" onclick="setPeriod('res',this,'trim')">Trimestre</button>
+        <button class="pb" onclick="setPeriod('res',this,'ano')">Año</button>
+      </div>
+    </div>
+  </div>
+  <!-- KPIs: 5 cards including media svc/cliente -->
+  <div class="g5" id="r-kpis"></div>
+  <!-- Desglose facturación: servicios vs producto -->
+  <div id="r-split-wrap" style="margin-bottom:16px;"></div>
+  <div class="g21">
+    <div class="card" style="animation-delay:.25s">
+      <div class="sh">Servicios por categoría <small>cantidad y €</small></div>
+      <div class="hbars" id="r-cats"></div>
+    </div>
+    <div class="card" style="animation-delay:.3s">
+      <div class="sh">Gastos del período <small>por partida</small></div>
+      <div class="ccat" id="r-gast"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P_SERVICIOS · SERVICIOS & CITAS ═══ -->
+<div class="pg" id="p-servicios">
+  <div class="ctrls">
+    <div>
+      <div class="pg-h">Servicios & Citas</div>
+      <div class="pg-s">Visitas reales · cada clienta cuenta una sola vez aunque tenga varias citas ese día</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select class="sel" id="svcMon" onchange="renderServicios()">
+        <option value="4">Mayo</option><option value="3">Abril</option>
+        <option value="2">Marzo</option><option value="1">Febrero</option><option value="0">Enero</option>
+      </select>
+      <div class="period-bar" id="svc-pb">
+        <button class="pb" onclick="setPeriod('svc',this,'dia')">Día</button>
+        <button class="pb" onclick="setPeriod('svc',this,'semana')">Semana</button>
+        <button class="pb on" onclick="setPeriod('svc',this,'mes')">Mes</button>
+        <button class="pb" onclick="setPeriod('svc',this,'trim')">Trimestre</button>
+        <button class="pb" onclick="setPeriod('svc',this,'ano')">Año</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="svc-note">
+    💡 <strong>Lógica de visitas agrupadas:</strong> cuando una clienta tiene varias citas el mismo día se agrupan como una sola visita. El ticket medio y los servicios por cliente se calculan sobre visitas reales, no sobre citas individuales.
+  </div>
+
+  <!-- KPIs -->
+  <div class="g5" id="svc-kpis" style="margin-bottom:18px;"></div>
+
+  <!-- Tabs desglose -->
+  <div class="svc-tab-row">
+    <button class="svc-tab on" onclick="showSvcTab('servicios',this)">✂️ Servicios de calendario</button>
+    <button class="svc-tab" onclick="showSvcTab('productos',this)">🧴 Productos de inventario</button>
+    <button class="svc-tab" onclick="showSvcTab('total',this)">💰 Total por trabajadora</button>
+  </div>
+
+  <!-- TAB: Servicios -->
+  <div id="svctab-servicios">
+    <div class="card" style="animation-delay:.1s">
+      <div class="sh">Desglose por trabajadora · servicios de calendario <small>visitas reales agrupadas</small></div>
+      <div class="strip-wrap">
+        <table class="svc-table">
+          <thead><tr>
+            <th>Trabajadora</th>
+            <th class="r">Visitas reales</th>
+            <th class="r">Citas (GHL)</th>
+            <th class="r">Servicios</th>
+            <th class="r">Svc / visita</th>
+            <th class="r">Facturación</th>
+            <th class="r">Ticket medio</th>
+          </tr></thead>
+          <tbody id="svc-tbody-serv"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Productos -->
+  <div id="svctab-productos" style="display:none">
+    <div class="card" style="animation-delay:.1s">
+      <div class="sh">Desglose por trabajadora · productos de inventario</div>
+      <div class="strip-wrap">
+        <table class="svc-table">
+          <thead><tr>
+            <th>Trabajadora</th>
+            <th class="r">Uds. vendidas</th>
+            <th class="r">Facturación</th>
+            <th class="r">% del total</th>
+            <th class="r">Ticket producto</th>
+          </tr></thead>
+          <tbody id="svc-tbody-prod"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Total -->
+  <div id="svctab-total" style="display:none">
+    <div class="card" style="animation-delay:.1s">
+      <div class="sh">Total por trabajadora · servicios + productos</div>
+      <div class="strip-wrap">
+        <table class="svc-table">
+          <thead><tr>
+            <th>Trabajadora</th>
+            <th class="r">Fac. servicios</th>
+            <th class="r">Fac. productos</th>
+            <th class="r">Total</th>
+            <th class="r">% del total</th>
+          </tr></thead>
+          <tbody id="svc-tbody-tot"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico facturación mensual servicios -->
+  <div class="g2" style="margin-top:16px;">
+    <div class="card" style="animation-delay:.2s">
+      <div class="sh">Facturación de servicios · mensual</div>
+      <div class="hbars" id="svc-monthly"></div>
+    </div>
+    <div class="card" style="animation-delay:.25s">
+      <div class="sh">Categorías de servicio más vendidas</div>
+      <div class="hbars" id="svc-cats"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P2 GASTOS ═══ -->
+<div class="pg" id="p-gastos">
+  <div class="ctrls">
+    <div><div class="pg-h">Registro de Gastos</div>
+      <div class="pg-s">Introduce cada factura con IVA e IRPF · se calcula automáticamente lo deducible</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select class="sel" id="gastMon" onchange="renderGastos()">
+        <option value="4">Mayo 2026</option><option value="3">Abril 2026</option>
+        <option value="2">Marzo 2026</option><option value="1">Febrero 2026</option><option value="0">Enero 2026</option>
+      </select>
+      <div class="period-bar" id="gast-pb">
+        <button class="pb" onclick="setPeriod('gast',this,'dia')">Día</button>
+        <button class="pb" onclick="setPeriod('gast',this,'semana')">Semana</button>
+        <button class="pb on" onclick="setPeriod('gast',this,'mes')">Mes</button>
+        <button class="pb" onclick="setPeriod('gast',this,'trim')">Trimestre</button>
+        <button class="pb" onclick="setPeriod('gast',this,'ano')">Año</button>
+      </div>
+    </div>
+  </div>
+  <div class="g12">
+    <!-- INPUT TABLE -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card" style="animation-delay:.05s">
+        <div class="sh">Facturas y gastos <small id="gast-mon-lbl">Mayo 2026</small></div>
+        <table class="exp-tbl">
+          <thead><tr>
+            <th>Categoría</th><th>Concepto</th>
+            <th style="text-align:right">Base €</th>
+            <th style="text-align:center">IVA %</th>
+            <th style="text-align:center">IRPF %</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="expBody"></tbody>
+        </table>
+        <button class="add-btn" onclick="addRow()">+ Añadir factura / gasto</button>
+        <div class="tot-row">
+          <span class="tot-lbl">Total base imponible</span>
+          <span class="tot-val" id="g-tot">€ 0</span>
+        </div>
+      </div>
+
+      <!-- IVA PANEL -->
+      <div class="card iva-c" style="animation-delay:.1s">
+        <div class="sh">Liquidación IVA <small>soportado vs repercutido</small></div>
+        <div class="tax-panel">
+          <div class="tax-title">IVA SOPORTADO (gastos · deducible)</div>
+          <div class="tax-row"><span class="tax-lbl">Total IVA en facturas de gasto</span><span class="tax-val" id="iva-sop" style="color:var(--positive)">€ 0</span></div>
+          <div class="tax-title" style="margin-top:0;">IVA REPERCUTIDO (estimado sobre facturación)</div>
+          <div class="tax-row">
+            <span class="tax-lbl">IVA 21% sobre facturación del período</span>
+            <span class="tax-val" id="iva-rep" style="color:var(--red)">€ 0</span>
+          </div>
+          <div class="tax-result">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);">
+              IVA A INGRESAR A HACIENDA
+            </span>
+            <span class="tax-result-val" id="iva-net" style="color:var(--red)">€ 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IRPF PANEL -->
+      <div class="card iva-c" style="animation-delay:.12s">
+        <div class="sh">Retenciones IRPF <small>facturas recibidas</small></div>
+        <div class="tax-panel">
+          <div class="tax-title">IRPF RETENIDO EN FACTURAS DE PROVEEDORES</div>
+          <div class="tax-row"><span class="tax-lbl">Total retenciones acumuladas</span><span class="tax-val" id="irpf-tot" style="color:var(--warn)">€ 0</span></div>
+          <div class="tax-result">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);">
+              A DEDUCIR EN DECLARACIÓN
+            </span>
+            <span class="tax-result-val" id="irpf-ded" style="color:var(--positive)">€ 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card" style="animation-delay:.1s">
+        <div class="sh">Por categoría · período</div>
+        <div class="ccat" id="g-catMes"></div>
+      </div>
+      <div class="card" style="animation-delay:.15s">
+        <div class="sh">Acumulado año · por categoría</div>
+        <div class="hbars" id="g-catAno"></div>
+      </div>
+      <div class="card" style="animation-delay:.2s">
+        <div class="sh">Histórico mensual</div>
+        <div class="strip-wrap"><table class="strip" id="g-hist"></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P3 EVOLUCIÓN ═══ -->
+<div class="pg" id="p-evolucion">
+  <div class="ctrls">
+    <div><div class="pg-h">Evolución Anual — De un Vistazo</div>
+      <div class="pg-s">Todos los indicadores juntos · sin navegar por meses</div></div>
+    <div class="period-bar" id="ev-pb">
+      <button class="pb" onclick="setPeriod('ev',this,'dia')">Día</button>
+      <button class="pb" onclick="setPeriod('ev',this,'semana')">Semana</button>
+      <button class="pb on" onclick="setPeriod('ev',this,'mes')">Mes</button>
+      <button class="pb" onclick="setPeriod('ev',this,'trim')">Trimestre</button>
+      <button class="pb" onclick="setPeriod('ev',this,'ano')">Año</button>
+    </div>
+  </div>
+  <div class="sh">Facturación · Gastos · Beneficio por mes</div>
+  <div class="mheat" id="ev-heat"></div>
+  <div class="card" style="animation-delay:.15s;margin-bottom:16px;">
+    <div class="sh">Tabla comparativa completa <small>todos los indicadores</small></div>
+    <div class="strip-wrap"><table class="strip" id="ev-tbl"></table></div>
+  </div>
+  <div class="g2">
+    <div class="card" style="animation-delay:.2s">
+      <div class="sh">Ticket medio <small>€/servicio · por mes</small></div>
+      <div class="hbars" id="ev-ticket"></div>
+    </div>
+    <div class="card" style="animation-delay:.22s">
+      <div class="sh">Media servicios por cliente <small>todos los meses</small></div>
+      <div class="hbars" id="ev-svc"></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card" style="animation-delay:.25s">
+      <div class="sh">Facturación</div>
+      <svg class="spark" id="sp-fac" viewBox="0 0 300 44"></svg>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;">
+        <span>Ene</span><span style="color:var(--burg);font-family:'Playfair Display',serif;" id="sp-fac-v"></span><span>Dic</span>
+      </div>
+    </div>
+    <div class="card" style="animation-delay:.28s">
+      <div class="sh">Gastos totales</div>
+      <svg class="spark" id="sp-gas" viewBox="0 0 300 44"></svg>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;">
+        <span>Ene</span><span style="color:var(--red);font-family:'Playfair Display',serif;" id="sp-gas-v"></span><span>Dic</span>
+      </div>
+    </div>
+    <div class="card" style="animation-delay:.31s">
+      <div class="sh">Beneficio neto</div>
+      <svg class="spark" id="sp-ben" viewBox="0 0 300 44"></svg>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;">
+        <span>Ene</span><span style="color:var(--positive);font-family:'Playfair Display',serif;" id="sp-ben-v"></span><span>Dic</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ P4 TRABAJADORAS ═══ -->
+<div class="pg" id="p-trabajadoras">
+  <div class="ctrls">
+    <div>
+      <div class="pg-h">Rentabilidad por Trabajadora</div>
+      <div class="pg-s">Objetivo: <span style="color:var(--cream);font-family:'Playfair Display',serif;">€4.500/mes</span> · clic en cada tarjeta para ver detalle de servicios</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);">
+        Objetivo €<input id="rentObj" type="number" value="4500" oninput="renderWorkers()"
+          style="background:#fff;border:1px solid var(--border);border-radius:7px;
+                 padding:4px 8px;color:var(--burg);font-family:'Playfair Display',serif;
+                 font-size:14px;font-weight:700;outline:none;width:85px;">/mes
+      </div>
+      <div class="period-bar" id="w-pb">
+        <button class="pb" onclick="setPeriod('w',this,'dia')">Día</button>
+        <button class="pb" onclick="setPeriod('w',this,'semana')">Semana</button>
+        <button class="pb on" onclick="setPeriod('w',this,'mes')">Mes</button>
+        <button class="pb" onclick="setPeriod('w',this,'trim')">Trimestre</button>
+        <button class="pb" onclick="setPeriod('w',this,'ano')">Año</button>
+      </div>
+    </div>
+  </div>
+  <div class="wgrid" id="w-grid"></div>
+</div>
+
+<!-- ═══ P5 OBJETIVOS ═══ -->
+<div class="pg" id="p-objetivos">
+  <div class="ctrls">
+    <div><div class="pg-h">Control de Gastos Óptimos</div>
+      <div class="pg-s">Beauty Global Concept 360 · ratios recomendados sobre facturación</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);">
+        Facturación: €<input id="facInput" type="number" value="5840" oninput="renderObj()"
+          style="background:#fff;border:1px solid var(--border);border-radius:7px;
+                 padding:4px 8px;color:var(--burg);font-family:'Playfair Display',serif;
+                 font-size:15px;font-weight:700;outline:none;width:95px;">
+      </div>
+      <div class="period-bar" id="obj-pb">
+        <button class="pb" onclick="setPeriod('obj',this,'dia')">Día</button>
+        <button class="pb" onclick="setPeriod('obj',this,'semana')">Semana</button>
+        <button class="pb on" onclick="setPeriod('obj',this,'mes')">Mes</button>
+        <button class="pb" onclick="setPeriod('obj',this,'trim')">Trimestre</button>
+        <button class="pb" onclick="setPeriod('obj',this,'ano')">Año</button>
+      </div>
+    </div>
+  </div>
+  <div id="obj-wrap"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIGURACIÓN API
+//  Cambia esta URL por la de tu servidor Railway
+//  Ejemplo: https://vallore-proxy.up.railway.app
+// ══════════════════════════════════════════════
+const API_URL = 'https://TU-SERVIDOR.up.railway.app';
+
+let GHL_LOCATIONS = [];
+let GHL_DATA      = null;
+
+function setLoading(on) {
+  const dot = document.querySelector('.dot');
+  if (dot) { dot.style.background = on ? '#f5a623' : '#a8c98a'; }
+}
+
+async function loadLocations() {
+  try {
+    setLoading(true);
+    const r = await fetch(API_URL + '/locations');
+    const json = await r.json();
+    GHL_LOCATIONS = json.locations || [];
+    const sel = document.getElementById('salonPick');
+    sel.innerHTML = GHL_LOCATIONS.map((l, i) =>
+      '<option value="' + i + '">' + l.name + (l.city ? ' · ' + l.city : '') + '</option>'
+    ).join('');
+    setLoading(false);
+    await loadDashboard();
+  } catch (e) {
+    setLoading(false);
+    console.warn('Servidor no disponible, usando datos de ejemplo:', e.message);
+    renderAll();
+  }
+}
+
+async function loadDashboard() {
+  const idx = parseInt(document.getElementById('salonPick').value) || 0;
+  const loc = GHL_LOCATIONS[idx];
+  if (!loc) { renderAll(); return; }
+
+  const mi    = parseInt(document.getElementById('resMon')?.value ?? 4);
+  const year  = 2026;
+  const start = new Date(year, mi, 1).toISOString().slice(0, 10);
+  const end   = new Date(year, mi + 1, 0).toISOString().slice(0, 10);
+
+  try {
+    setLoading(true);
+    const r  = await fetch(API_URL + '/dashboard?locationId=' + loc.id + '&startDate=' + start + '&endDate=' + end);
+    GHL_DATA = await r.json();
+    setLoading(false);
+    renderAll();
+  } catch (e) {
+    setLoading(false);
+    GHL_DATA = null;
+    renderAll();
+  }
+}
+
+function renderAll() {
+  renderResumen();
+  renderServicios();
+  renderEvolucion();
+  renderWorkers();
+  renderObj();
+}
+
+// ══════════════════════════════════════════════
+//  DATOS BASE (fallback cuando no hay API)
+// ══════════════════════════════════════════════
+const MESES_C=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESES_F=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const BASE_FAC=[
+  [4200,4580,5020,5540,5840,null,null,null,null,null,null,null],
+  [3600,3840,4100,4700,4920,null,null,null,null,null,null,null],
+  [3100,3300,3650,4000,4210,null,null,null,null,null,null,null],
+];
+const FAC_FACTORS=[.72,.78,.86,.95,1,.92,.88,.75,.82,.90,.96,.99];
+function getFac(s,m){
+  const base=BASE_FAC[s][4];
+  return BASE_FAC[s][m]!==null?BASE_FAC[s][m]:Math.round(base*FAC_FACTORS[m]);
+}
+function getYearFac(s){return MESES_C.map((_,m)=>getFac(s,m));}
+
+// Period multipliers
+const PERIOD_MUL={dia:1/22,semana:1/4,mes:1,trim:3,ano:12};
+let curPeriods={res:'mes',gast:'mes',ev:'mes',w:'mes',obj:'mes',svc:'mes'};
+function getPeriodMul(key){return PERIOD_MUL[curPeriods[key]]||1;}
+
+const SALONES=[
+  {name:'Salon Élite',city:'Madrid',
+   // prodRev = facturación venta de producto; svcRev = facturación servicios
+   prodRev:880, svcRev:4960,
+   cats:[{n:'Corte & Peinado',qty:38,rev:1520,c:'#dddaba'},{n:'Coloración',qty:27,rev:1890,c:'#c9b89a'},{n:'Tratamientos',qty:16,rev:880,c:'#8aad6e'},{n:'Manicura',qty:8,rev:440,c:'#b01a1c'},{n:'Maquillaje',qty:4,rev:230,c:'#7a2a45'}],
+   ticket:[48,50,52,58,62,57,54,49,53,58,60,62],
+   svc:[1.9,2.0,2.1,2.2,2.3,2.2,2.1,1.9,2.0,2.2,2.3,2.4]},
+  {name:'Studio Ona',city:'Barcelona',
+   prodRev:820, svcRev:4100,
+   cats:[{n:'Corte',qty:42,rev:1260,c:'#dddaba'},{n:'Coloración',qty:30,rev:1640,c:'#c9b89a'},{n:'Tratamientos',qty:18,rev:720,c:'#8aad6e'},{n:'Manicura',qty:7,rev:300,c:'#b01a1c'},{n:'Otros',qty:4,rev:180,c:'#7a2a45'}],
+   ticket:[36,38,39,41,40,39,38,36,38,40,41,42],
+   svc:[1.8,1.9,2.0,2.1,2.1,2.0,1.9,1.8,1.9,2.0,2.1,2.2]},
+  {name:'Belleza Mía',city:'Valencia',
+   prodRev:610, svcRev:3600,
+   cats:[{n:'Corte',qty:35,rev:1050,c:'#dddaba'},{n:'Coloración',qty:24,rev:1320,c:'#c9b89a'},{n:'Tratamientos',qty:18,rev:720,c:'#8aad6e'},{n:'Manicura',qty:7,rev:330,c:'#b01a1c'},{n:'Otros',qty:4,rev:180,c:'#7a2a45'}],
+   ticket:[37,39,40,41,40,39,38,36,38,40,41,43],
+   svc:[1.7,1.8,1.9,2.0,2.0,1.9,1.8,1.7,1.8,1.9,2.0,2.1]},
+];
+
+const EXP_CATS=[
+  {id:'personal', n:'Personal / SS',  ic:'👥', c:'#7a2a45'},
+  {id:'alquiler', n:'Alquiler',        ic:'🏠', c:'#c9b89a'},
+  {id:'producto', n:'Compra producto', ic:'🧴', c:'#dddaba'},
+  {id:'luz',      n:'Luz',             ic:'💡', c:'#8aad6e'},
+  {id:'gas',      n:'Gas',             ic:'🔥', c:'#a8c98a'},
+  {id:'autonomo', n:'Autónomo',        ic:'📋', c:'#b8a88a'},
+  {id:'iva',      n:'IVA / Hacienda',  ic:'🧾', c:'#b01a1c'},
+  {id:'formacion',n:'Formación',       ic:'📚', c:'#5a7a4e'},
+  {id:'marketing',n:'Marketing',       ic:'📣', c:'#9a8a6a'},
+  {id:'otros',    n:'Otros',           ic:'📦', c:'#6a6a5a'},
+];
+function eCat(id){return EXP_CATS.find(c=>c.id===id)||EXP_CATS[EXP_CATS.length-1];}
+
+// Expense state: {catId, concept, amount (base), ivaRate, irpfRate}
+const expData={};
+function eKey(s,m){return `${s}_${m}`;}
+function getExp(s,m){
+  const k=eKey(s,m);
+  if(!expData[k]){expData[k]=buildDefaultExp(s,m);}
+  return expData[k];
+}
+function buildDefaultExp(s,m){
+  const f=getFac(s,m);
+  const rows=[
+    {catId:'personal', concept:'Sueldos + SS',       amount:Math.round(f*.26), ivaRate:0,  irpfRate:0},
+    {catId:'alquiler', concept:'Alquiler local',      amount:Math.round(f*.11), ivaRate:21, irpfRate:19},
+    {catId:'producto', concept:'Compra producto',     amount:Math.round(f*.12), ivaRate:21, irpfRate:0},
+    {catId:'luz',      concept:'Electricidad',        amount:Math.round(f*.022),ivaRate:21, irpfRate:0},
+    {catId:'gas',      concept:'Gas calefacción',     amount:Math.round(f*.01), ivaRate:21, irpfRate:0},
+    {catId:'autonomo', concept:'Cuota autónomo',      amount:300,               ivaRate:0,  irpfRate:0},
+    {catId:'formacion',concept:'Formación equipo',    amount:Math.round(f*.025),ivaRate:21, irpfRate:15},
+    {catId:'marketing',concept:'Redes + publicidad',  amount:Math.round(f*.02), ivaRate:21, irpfRate:15},
+    {catId:'otros',    concept:'Material oficina',    amount:Math.round(f*.015),ivaRate:21, irpfRate:0},
+  ];
+  if(s===0&&m===4){
+    rows[0].amount=1460;rows[1].amount=600;rows[2].amount=500;rows[3].amount=140;
+    rows[4].amount=60;rows[5].amount=300;rows[6].amount=120;rows[7].amount=80;rows[8].amount=40;
+  }
+  return rows;
+}
+
+const WORKERS=[
+  {n:'Naroa González',role:'Estilista Senior',rev:2140,svcs:34,ticket:62.9,prod:320,svcCli:2.5,
+   cats:[{n:'Coloración',qty:14,rev:980,c:'#c9b89a'},{n:'Corte',qty:12,rev:600,c:'#dddaba'},{n:'Tratamientos',qty:8,rev:560,c:'#8aad6e'}]},
+  {n:'Lucía Martínez',role:'Estilista',rev:1680,svcs:28,ticket:60.0,prod:280,svcCli:2.2,
+   cats:[{n:'Corte',qty:13,rev:650,c:'#dddaba'},{n:'Coloración',qty:9,rev:720,c:'#c9b89a'},{n:'Manicura',qty:6,rev:310,c:'#b01a1c'}]},
+  {n:'Sara López',role:'Colorista',rev:1340,svcs:21,ticket:63.8,prod:180,svcCli:2.1,
+   cats:[{n:'Coloración',qty:14,rev:980,c:'#c9b89a'},{n:'Tratamientos',qty:5,rev:240,c:'#8aad6e'},{n:'Corte',qty:2,rev:120,c:'#dddaba'}]},
+  {n:'María Ruiz',role:'Esteticista',rev:980,svcs:18,ticket:54.4,prod:100,svcCli:1.8,
+   cats:[{n:'Manicura',qty:10,rev:480,c:'#b01a1c'},{n:'Tratamientos',qty:5,rev:340,c:'#8aad6e'},{n:'Maquillaje',qty:3,rev:160,c:'#7a2a45'}]},
+  {n:'Carmen Soto',role:'Recepcionista',rev:660,svcs:14,ticket:47.1,prod:0,svcCli:1.5,
+   cats:[{n:'Corte',qty:8,rev:360,c:'#dddaba'},{n:'Peinado',qty:6,rev:300,c:'#c9b89a'}]},
+  {n:'Isabel Vega',role:'Aprendiz',rev:340,svcs:8,ticket:42.5,prod:20,svcCli:1.3,
+   cats:[{n:'Corte básico',qty:8,rev:340,c:'#dddaba'}]},
+];
+
+const OBJ_DEF=[
+  {key:'producto',lbl:'Compra de Producto',ic:'🧴',max:13,desc:'No superar el 13% de la facturación en compra de producto.'},
+  {key:'personal',lbl:'Personal (sueldos+SS)',ic:'👥',max:30,min:20,desc:'El coste de personal debe estar entre el 20% y el 30%.'},
+  {key:'formacion',lbl:'Formación',ic:'📚',max:3,desc:'Invertir hasta el 3% de la facturación en formación.'},
+  {key:'alquiler',lbl:'Alquiler del local',ic:'🏠',max:12,desc:'El alquiler no debe superar el 12% de la facturación.'},
+];
+
+// ══════════════════════════════════════════════
+//  STATE + HELPERS
+// ══════════════════════════════════════════════
+let CUR_SALON=0;
+const fmt=n=>Math.round(n).toLocaleString('es-ES');
+const fmtD=n=>Number(n).toFixed(1);
+const pctStr=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0%';
+function sumBase(rows){return rows.reduce((a,r)=>a+Number(r.amount||0),0);}
+function sumIVA(rows){return rows.reduce((a,r)=>a+Number(r.amount||0)*(Number(r.ivaRate||0)/100),0);}
+function sumIRPF(rows){return rows.reduce((a,r)=>a+Number(r.amount||0)*(Number(r.irpfRate||0)/100),0);}
+function byCatMap(rows){const m={};rows.forEach(r=>{m[r.catId]=(m[r.catId]||0)+Number(r.amount||0);});return m;}
+
+// Period label
+const PERIOD_LABELS={dia:'Hoy',semana:'Esta semana',mes:'Este mes',trim:'Este trimestre',ano:'Este año'};
+
+// ══════════════════════════════════════════════
+//  NAV + PERIOD
+// ══════════════════════════════════════════════
+function goPage(id,btn){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(id==='gastos')renderGastos();
+  if(id==='evolucion')renderEvolucion();
+  if(id==='trabajadoras')renderWorkers();
+  if(id==='objetivos')renderObj();
+  if(id==='servicios')renderServicios();
+}
+
+function changeSalon(){
+  CUR_SALON=parseInt(document.getElementById('salonPick').value);
+  if(GHL_LOCATIONS.length > 0){
+    loadDashboard();
+  } else {
+    renderResumen();renderEvolucion();renderWorkers();renderObj();renderServicios();
+  }
+  if(document.getElementById('p-gastos').classList.contains('on'))renderGastos();
+}
+
+function setPeriod(key,btn,period){
+  // deactivate siblings in same period-bar
+  const pb=btn.closest('.period-bar');
+  if(pb)pb.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  curPeriods[key]=period;
+  if(key==='res')renderResumen();
+  if(key==='gast')renderGastos();
+  if(key==='ev')renderEvolucion();
+  if(key==='w')renderWorkers();
+  if(key==='obj')renderObj();
+  if(key==='svc')renderServicios();
+}
+
+// ══════════════════════════════════════════════
+//  P1 · RESUMEN
+// ══════════════════════════════════════════════
+function renderResumen(){
+  const s=SALONES[CUR_SALON];
+  const mi=parseInt(document.getElementById('resMon').value);
+  const mul=getPeriodMul('res');
+  const baseFac=getFac(CUR_SALON,mi);
+  const fac=Math.round(baseFac*mul);
+  const rows=getExp(CUR_SALON,mi);
+  const baseGast=sumBase(rows);
+  const gast=Math.round(baseGast*mul);
+  const ben=fac-gast;
+  const periodLbl=PERIOD_LABELS[curPeriods['res']];
+
+  document.getElementById('res-sub').textContent=`${s.name} · ${MESES_F[mi]} 2026 · ${periodLbl}`;
+
+  // Desglose servicios vs producto
+  const facSvc=Math.round(s.svcRev*mul);
+  const facProd=Math.round(s.prodRev*mul);
+  const pctSvc=fac?((facSvc/fac)*100).toFixed(1):0;
+  const pctProd=fac?((facProd/fac)*100).toFixed(1):0;
+
+  const totalSvcs=s.cats.reduce((a,c)=>a+c.qty,0);
+  const adjSvcs=Math.round(totalSvcs*mul);
+  const clientsEst=Math.round(adjSvcs/s.svc[mi]);
+
+  // Top 5 KPIs
+  const kpis=[
+    {lbl:'💰 Facturación total',v:`<span class="cur">€</span>${fmt(fac)}`,tr:'up',note:'Servicios + Producto',cls:'gold-c'},
+    {lbl:'📦 Gastos totales',v:`<span class="cur">€</span>${fmt(gast)}`,tr:gast/fac>.6?'dn':'up',note:pctStr(gast,fac)+' s/facturación'},
+    {lbl:'✨ Beneficio neto',v:`<span class="cur">€</span>${fmt(Math.max(ben,0))}`,tr:ben>0?'up':'dn',note:'Margen: '+pctStr(Math.max(ben,0),fac),cls:ben>0?'green-c':'red-c'},
+    {lbl:'🎯 Ticket medio',v:`<span class="cur">€</span>${fmtD(s.ticket[mi])}`,tr:'up',note:'Por servicio'},
+    {lbl:'📐 Media svc/cliente',v:fmtD(s.svc[mi]),tr:'up',note:`~${fmt(clientsEst)} clientes · ${fmt(adjSvcs)} servicios`},
+  ];
+  document.getElementById('r-kpis').innerHTML=kpis.map((k,i)=>`
+    <div class="card ${k.cls||''}" style="animation-delay:${i*.07}s">
+      <div class="clbl">${k.lbl}</div>
+      <div class="cval">${k.v}</div>
+      <div class="ctr ${k.tr}">${k.tr==='up'?'▲':'▼'} vs período ant.</div>
+      <div class="cnote">${k.note}</div>
+    </div>`).join('');
+
+  // Desglose facturación: servicios vs producto
+  document.getElementById('r-split-wrap').innerHTML=`
+    <div class="card" style="animation-delay:.36s;padding:20px 22px;">
+      <div class="sh">Desglose de facturación <small>servicios · producto · porcentajes</small></div>
+      <!-- Barra visual proporcional -->
+      <div style="display:flex;height:12px;border-radius:7px;overflow:hidden;margin-bottom:18px;gap:2px;">
+        <div style="width:${pctSvc}%;background:var(--burg);opacity:.8;border-radius:6px 0 0 6px;transition:width .9s ease;"></div>
+        <div style="width:${pctProd}%;background:var(--cream2);border-radius:0 6px 6px 0;transition:width .9s ease;"></div>
+      </div>
+      <!-- Tres columnas -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+        <!-- Total -->
+        <div style="background:var(--burg);border-radius:11px;padding:16px 14px;">
+          <div style="font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:rgba(221,218,186,.6);margin-bottom:8px;">💰 Total facturado</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);">
+            <span style="font-size:13px;opacity:.55;margin-right:1px;">€</span>${fmt(fac)}
+          </div>
+          <div style="font-size:11px;color:rgba(221,218,186,.55);margin-top:5px;font-style:italic;">100% del período</div>
+        </div>
+        <!-- Servicios -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 14px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:${pctSvc}%;height:3px;background:var(--burg);opacity:.6;border-radius:3px;"></div>
+          <div style="font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">✂️ Servicios</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text);">
+            <span style="font-size:13px;color:var(--burg);opacity:.7;margin-right:1px;">€</span>${fmt(facSvc)}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            <span style="font-size:11px;color:var(--muted);font-style:italic;">de la facturación</span>
+            <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--burg);">${pctSvc}%</span>
+          </div>
+        </div>
+        <!-- Producto -->
+        <div style="background:var(--bg2);border:1px solid rgba(68,23,40,.15);border-radius:11px;padding:16px 14px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:${pctProd}%;height:3px;background:var(--cream2);border-radius:3px;"></div>
+          <div style="font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">🧴 Producto</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text);">
+            <span style="font-size:13px;color:var(--burg);opacity:.7;margin-right:1px;">€</span>${fmt(facProd)}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            <span style="font-size:11px;color:var(--muted);font-style:italic;">de la facturación</span>
+            <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--burg2);">${pctProd}%</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const maxCR=Math.max(...s.cats.map(c=>c.rev));
+  document.getElementById('r-cats').innerHTML=s.cats.map(c=>`
+    <div class="hrow">
+      <div class="hn">${c.n}</div>
+      <div class="ht"><div class="hf" style="width:${Math.round(c.rev/maxCR*100)}%;background:${c.c};opacity:.8;"></div></div>
+      <div style="display:flex;gap:8px;">
+        <span class="hv" style="color:${c.c};min-width:55px;text-align:right;">€${fmt(Math.round(c.rev*mul))}</span>
+        <span class="hv" style="color:var(--muted);min-width:26px;">${Math.round(c.qty*mul)}</span>
+      </div>
+    </div>`).join('');
+
+  const bcm=byCatMap(rows);
+  const maxG=Math.max(...Object.values(bcm),1);
+  document.getElementById('r-gast').innerHTML=
+    Object.entries(bcm).sort((a,b)=>b[1]-a[1]).map(([id,v])=>{
+      const cat=eCat(id);
+      const vAdj=Math.round(v*mul);
+      return`<div class="ccat-row">
+        <div class="ccat-ic">${cat.ic}</div>
+        <div class="ccat-nm">${cat.n}</div>
+        <div class="ccat-tr"><div class="ccat-fl" style="width:${Math.round(v/maxG*100)}%;background:${cat.c};opacity:.8;"></div></div>
+        <div class="ccat-vl" style="color:${cat.c}">€${fmt(vAdj)}</div>
+        <div class="ccat-pc">${pctStr(v,baseGast)}</div>
+      </div>`;}).join('');
+}
+
+// ══════════════════════════════════════════════
+//  P2 · GASTOS
+// ══════════════════════════════════════════════
+function renderGastos(){
+  const mi=parseInt(document.getElementById('gastMon').value);
+  document.getElementById('gast-mon-lbl').textContent=MESES_F[mi]+' 2026';
+  const rows=getExp(CUR_SALON,mi);
+  buildExpTable(rows,mi);
+  buildGastCharts(rows,mi);
+}
+
+function buildExpTable(rows,mi){
+  document.getElementById('expBody').innerHTML=rows.map((r,i)=>{
+    return`<tr>
+      <td style="width:140px">
+        <select class="exp-sel" onchange="updRow(${i},'catId',this.value,${mi})">
+          ${EXP_CATS.map(c=>`<option value="${c.id}" ${c.id===r.catId?'selected':''}>${c.ic} ${c.n}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="exp-in" value="${r.concept||''}" placeholder="Concepto" oninput="updRow(${i},'concept',this.value,${mi})"></td>
+      <td style="text-align:right;width:100px">
+        <input class="exp-num" type="number" value="${r.amount||0}" oninput="updRow(${i},'amount',this.value,${mi})">
+      </td>
+      <td style="width:68px;text-align:center">
+        <div style="display:flex;align-items:center;gap:2px;">
+          <input class="exp-pct" type="number" value="${r.ivaRate||0}" min="0" max="21"
+            title="IVA %" oninput="updRow(${i},'ivaRate',this.value,${mi})"><span style="font-size:10px;color:var(--muted);">%</span>
+        </div>
+      </td>
+      <td style="width:68px;text-align:center">
+        <div style="display:flex;align-items:center;gap:2px;">
+          <input class="exp-pct" type="number" value="${r.irpfRate||0}" min="0" max="21"
+            title="IRPF %" oninput="updRow(${i},'irpfRate',this.value,${mi})"><span style="font-size:10px;color:var(--muted);">%</span>
+        </div>
+      </td>
+      <td style="width:30px"><button class="del-btn" onclick="delRow(${i},${mi})">✕</button></td>
+    </tr>`;}).join('');
+  refreshTaxPanel(rows,mi);
+}
+
+function refreshTaxPanel(rows,mi){
+  const base=sumBase(rows);
+  const ivaSop=sumIVA(rows);
+  const irpfTot=sumIRPF(rows);
+  const fac=getFac(CUR_SALON,mi);
+  const ivaRep=fac*0.21;
+  const ivaNet=Math.max(ivaRep-ivaSop,0);
+  document.getElementById('g-tot').textContent='€ '+fmt(base);
+  document.getElementById('iva-sop').textContent='€ '+fmt(ivaSop);
+  document.getElementById('iva-rep').textContent='€ '+fmt(ivaRep);
+  document.getElementById('iva-net').textContent='€ '+fmt(ivaNet);
+  document.getElementById('irpf-tot').textContent='€ '+fmt(irpfTot);
+  document.getElementById('irpf-ded').textContent='€ '+fmt(irpfTot);
+}
+
+function updRow(i,field,val,mi){
+  const rows=getExp(CUR_SALON,mi);
+  if(field==='amount'||field==='ivaRate'||field==='irpfRate') rows[i][field]=Number(val);
+  else rows[i][field]=val;
+  refreshTaxPanel(rows,mi);
+  buildGastCharts(rows,mi);
+  if(document.getElementById('p-resumen').classList.contains('on'))renderResumen();
+}
+function delRow(i,mi){getExp(CUR_SALON,mi).splice(i,1);renderGastos();}
+function addRow(){
+  const mi=parseInt(document.getElementById('gastMon').value);
+  getExp(CUR_SALON,mi).push({catId:'otros',concept:'',amount:0,ivaRate:21,irpfRate:0});
+  renderGastos();
+}
+
+function buildGastCharts(rows,mi){
+  const bcm=byCatMap(rows);
+  const tot=sumBase(rows);
+  const maxV=Math.max(...Object.values(bcm),1);
+
+  document.getElementById('g-catMes').innerHTML=
+    Object.entries(bcm).sort((a,b)=>b[1]-a[1]).map(([id,v])=>{
+      const c=eCat(id);
+      return`<div class="ccat-row">
+        <div class="ccat-ic">${c.ic}</div><div class="ccat-nm">${c.n}</div>
+        <div class="ccat-tr"><div class="ccat-fl" style="width:${Math.round(v/maxV*100)}%;background:${c.c};opacity:.82;"></div></div>
+        <div class="ccat-vl" style="color:${c.c}">€${fmt(v)}</div>
+        <div class="ccat-pc">${pctStr(v,tot)}</div>
+      </div>`;}).join('');
+
+  const annMap={};
+  for(let m=0;m<=mi;m++){
+    getExp(CUR_SALON,m).forEach(r=>{annMap[r.catId]=(annMap[r.catId]||0)+Number(r.amount||0);});
+  }
+  const annTot=Object.values(annMap).reduce((a,b)=>a+b,0);
+  const maxA=Math.max(...Object.values(annMap),1);
+  document.getElementById('g-catAno').innerHTML=
+    Object.entries(annMap).sort((a,b)=>b[1]-a[1]).map(([id,v])=>{
+      const c=eCat(id);
+      return`<div class="hrow">
+        <div style="font-size:12px;display:flex;align-items:center;gap:5px;min-width:115px;">${c.ic} ${c.n}</div>
+        <div class="ht"><div class="hf" style="width:${Math.round(v/maxA*100)}%;background:${c.c};opacity:.8;"></div></div>
+        <div style="display:flex;gap:8px;">
+          <span class="hv" style="color:${c.c};min-width:60px;text-align:right;">€${fmt(v)}</span>
+          <span class="hv" style="color:var(--muted);min-width:30px;">${pctStr(v,annTot)}</span>
+        </div>
+      </div>`;}).join('');
+
+  const allIds=[...new Set(Object.keys(annMap))];
+  let thead=`<tr><th>Mes</th>${allIds.map(id=>`<th>${eCat(id).ic}</th>`).join('')}<th>Total</th></tr>`;
+  let tbody='';
+  for(let m=0;m<=mi;m++){
+    const mr=getExp(CUR_SALON,m);const mc=byCatMap(mr);const mt=sumBase(mr);
+    tbody+=`<tr><td>${MESES_F[m]}</td>${allIds.map(id=>`<td><span class="tv">€${fmt(mc[id]||0)}</span></td>`).join('')}<td><span class="tv" style="color:var(--red);">€${fmt(mt)}</span></td></tr>`;
+  }
+  document.getElementById('g-hist').innerHTML=`<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+}
+
+// ══════════════════════════════════════════════
+//  P3 · EVOLUCIÓN
+// ══════════════════════════════════════════════
+function renderEvolucion(){
+  const s=SALONES[CUR_SALON];
+  const mul=getPeriodMul('ev');
+  const facYrBase=getYearFac(CUR_SALON);
+  const facYr=facYrBase.map(v=>Math.round(v*mul));
+  const gastYr=MESES_C.map((_,m)=>Math.round(sumBase(getExp(CUR_SALON,m))*mul));
+  const benYr=facYr.map((f,m)=>f-gastYr[m]);
+  const periodLbl=PERIOD_LABELS[curPeriods['ev']];
+
+  document.getElementById('ev-heat').innerHTML=facYr.map((f,m)=>{
+    const g=gastYr[m],b=f-g;const isCur=m===4;
+    const alpha=Math.min(.07+.15*(Math.abs(b)/Math.max(f,1)),.28);
+    const bg=b>0?`rgba(74,122,48,${alpha})`:`rgba(176,26,28,${alpha})`;
+    return`<div class="mh-cell" style="background:${bg};${isCur?'border-color:var(--burg);border-width:2px;':''}">
+      <div class="mh-m">${MESES_C[m]}${isCur?' ◀':''}</div>
+      <div class="mh-fac" style="color:var(--burg);font-size:${f>5000?'11':'12'}px;">€${(f/1000).toFixed(1)}k</div>
+      <div class="mh-g" style="color:var(--red);">-€${(g/1000).toFixed(1)}k</div>
+      <div class="mh-b" style="color:${b>0?'var(--positive)':'var(--red)'};font-size:10px;">${b>0?'':'−'}€${Math.abs(b).toLocaleString('es-ES')}</div>
+    </div>`;}).join('');
+
+  const th=`<tr><th style="text-align:left">Mes</th><th>Facturación</th><th>Gastos</th><th>Beneficio</th><th>Margen</th><th>Ticket €</th><th>Svc/cliente</th><th>IVA 21%</th></tr>`;
+  const tb=facYr.map((f,m)=>{
+    const g=gastYr[m],b=f-g,mg=((b/Math.max(f,1))*100).toFixed(1);const isCur=m===4;
+    return`<tr class="${isCur?'cur':''}">
+      <td>${MESES_F[m]}${isCur?' ◀':''}</td>
+      <td><span class="tv" style="color:var(--burg);">€${fmt(f)}</span></td>
+      <td><span class="tv" style="color:var(--red);">€${fmt(g)}</span></td>
+      <td><span class="tv" style="color:${b>0?'var(--positive)':'var(--red)'};">${b>0?'':'−'}€${fmt(Math.abs(b))}</span></td>
+      <td><span style="font-family:'Playfair Display',serif;font-size:12px;color:${parseFloat(mg)>30?'var(--positive)':'var(--text2)'};">${mg}%</span></td>
+      <td><span class="tv">€${fmtD(s.ticket[m])}</span></td>
+      <td><span class="tv">${fmtD(s.svc[m])}</span></td>
+      <td><span class="tv" style="color:var(--red);">€${fmt(Math.round(f*.21))}</span></td>
+    </tr>`;}).join('');
+  document.getElementById('ev-tbl').innerHTML=`<thead>${th}</thead><tbody>${tb}</tbody>`;
+
+  const maxT=Math.max(...s.ticket);
+  document.getElementById('ev-ticket').innerHTML=s.ticket.map((t,m)=>`
+    <div class="hrow">
+      <div style="font-size:10px;color:var(--muted);min-width:22px;">${MESES_C[m]}</div>
+      <div class="ht"><div class="hf" style="width:${Math.round(t/maxT*100)}%;background:linear-gradient(90deg,var(--burg),rgba(68,23,40,.3));"></div></div>
+      <div style="font-family:'Playfair Display',serif;font-size:12px;color:var(--burg);min-width:42px;text-align:right;">€${fmtD(t)}</div>
+      ${m===4?`<span style="font-size:9px;background:var(--burg);border-radius:4px;padding:1px 6px;color:var(--cream);">actual</span>`:''}
+    </div>`).join('');
+
+  const maxS=Math.max(...s.svc);
+  document.getElementById('ev-svc').innerHTML=s.svc.map((v,m)=>`
+    <div class="hrow">
+      <div style="font-size:10px;color:var(--muted);min-width:22px;">${MESES_C[m]}</div>
+      <div class="ht"><div class="hf" style="width:${Math.round(v/maxS*100)}%;background:linear-gradient(90deg,var(--burg2),rgba(90,30,52,.3));"></div></div>
+      <div style="font-family:'Playfair Display',serif;font-size:12px;color:var(--text2);min-width:28px;text-align:right;">${fmtD(v)}</div>
+      ${m===4?`<span style="font-size:9px;background:rgba(68,23,40,.1);border-radius:4px;padding:1px 6px;color:var(--burg);">actual</span>`:''}
+    </div>`).join('');
+
+  function makeSpark(id,data,color,labelId){
+    const mn=Math.min(...data),mx=Math.max(...data),range=mx-mn||1;
+    const W=300,H=44,P=6;
+    const pts=data.map((v,i)=>`${Math.round(i/(data.length-1)*(W-P*2))+P},${Math.round(H-P-((v-mn)/range)*(H-P*2))}`).join(' ');
+    const gid='g'+id;
+    document.getElementById(id).innerHTML=`
+      <defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity=".5"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polyline fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" points="${pts}" opacity=".9"/>
+      <polyline fill="url(#${gid})" stroke="none" points="${P},${H} ${pts} ${W-P},${H}" opacity=".22"/>
+      <circle cx="${Math.round(4/(data.length-1)*(W-P*2))+P}" cy="${Math.round(H-P-((data[4]-mn)/range)*(H-P*2))}" r="4" fill="${color}" opacity=".9"/>`;
+    if(labelId)document.getElementById(labelId).textContent='€'+fmt(data[4]);
+  }
+  makeSpark('sp-fac',facYr,'#441728','sp-fac-v');
+  makeSpark('sp-gas',gastYr,'#b01a1c','sp-gas-v');
+  makeSpark('sp-ben',benYr,'#4a7a30','sp-ben-v');
+}
+
+// ══════════════════════════════════════════════
+//  P4 · TRABAJADORAS
+// ══════════════════════════════════════════════
+function renderWorkers(){
+  const TARGET=parseFloat(document.getElementById('rentObj').value)||4500;
+  const mul=getPeriodMul('w');
+  const periodLbl=PERIOD_LABELS[curPeriods['w']];
+
+  document.getElementById('w-grid').innerHTML=WORKERS.map((w,i)=>{
+    const rev=Math.round(w.rev*mul);
+    const prod=Math.round(w.prod*mul);
+    const svcFac=rev-prod;
+    const target=Math.round(TARGET*mul);
+    const pctR=Math.min(rev/target*100,105);
+    const diff=target-rev;
+    const isOk=rev>=target,isWarn=!isOk&&rev>=target*.75;
+    const status=isOk?'ok':isWarn?'warn':'bad';
+    const fillColor=isOk?'linear-gradient(90deg,var(--positive),rgba(74,122,48,.4))':isWarn?'linear-gradient(90deg,var(--warn),rgba(138,106,32,.4))':'linear-gradient(90deg,var(--red),rgba(176,26,28,.4))';
+    const maxC=Math.max(...w.cats.map(c=>c.rev));
+    const detailId=`wd-${i}`;
+
+    // Category detail rows — quantity + bar + revenue
+    const catRows=w.cats.map(c=>`
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+        <div style="font-size:11px;color:var(--muted);min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.n}</div>
+        <!-- qty badge -->
+        <div style="background:rgba(68,23,40,.07);border-radius:6px;padding:2px 8px;
+             font-family:'Playfair Display',serif;font-size:12px;color:var(--burg);
+             min-width:36px;text-align:center;">${Math.round(c.qty*mul)}</div>
+        <div style="flex:1;height:5px;background:rgba(221,218,186,.07);border-radius:2px;overflow:hidden;">
+          <div style="width:${Math.round(c.rev/maxC*100)}%;height:100%;background:${c.c};opacity:.8;border-radius:2px;transition:width .8s;"></div>
+        </div>
+        <span style="font-size:11px;color:${c.c};font-family:'Playfair Display',serif;min-width:52px;text-align:right;">€${fmt(Math.round(c.rev*mul))}</span>
+      </div>`).join('');
+
+    return`<div class="wcard" style="animation-delay:${i*.07}s;">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px;">
+        <div class="wav">${w.n[0]}</div>
+        <div><div class="wname">${w.n}</div><div class="wrole">${w.role}</div></div>
+      </div>
+
+      <div class="wst"><span class="wst-l">💰 Facturación total</span><span class="wst-v" style="color:var(--cream)">€${fmt(rev)}</span></div>
+      <div class="wst"><span class="wst-l">✂️ Servicios facturados</span><span class="wst-v">€${fmt(svcFac)}</span></div>
+      <div class="wst"><span class="wst-l">🧴 Venta producto</span><span class="wst-v">€${fmt(prod)}</span></div>
+      <div class="wst"><span class="wst-l">🎯 Ticket medio</span><span class="wst-v">€${fmtD(w.ticket)}</span></div>
+      <div class="wst"><span class="wst-l">📐 Svc/cliente</span><span class="wst-v">${fmtD(w.svcCli)}</span></div>
+
+      <!-- Rentabilidad meter -->
+      <div style="margin-top:13px;">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">
+          Objetivo · €${fmt(target)}/${periodLbl.toLowerCase()}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+          <span style="font-family:'Playfair Display',serif;color:${isOk?'var(--positive)':isWarn?'var(--warn)':'var(--red)'};">€${fmt(rev)}</span>
+          <span style="color:var(--muted);">obj €${fmt(target)}</span>
+        </div>
+        <div class="rent-track"><div class="rent-fill" style="width:${Math.min(pctR,100)}%;background:${fillColor};"></div></div>
+        <div class="rent-badge rb-${status}">
+          <span>${isOk?'✓ Objetivo alcanzado':isWarn?'⚡ Cerca del objetivo':'✗ Sin llegar al objetivo'}</span>
+          <span class="rb-num">${isOk?`+€${fmt(rev-target)} extra`:`Faltan €${fmt(diff)}`}</span>
+        </div>
+      </div>
+
+      <!-- Expand button -->
+      <button class="w-expand-btn" onclick="toggleDetail('${detailId}',this)">
+        ▼ Ver servicios por categoría
+      </button>
+
+      <!-- DETAIL: servicios por categoría (cantidad + barra + €) -->
+      <div class="w-detail" id="${detailId}">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+          Cantidad · Categoría · Facturación
+        </div>
+        ${catRows}
+        <div style="margin-top:8px;padding:9px 12px;background:rgba(68,23,40,.05);border-radius:8px;
+             display:flex;justify-content:space-between;font-size:12px;border:1px solid var(--border);">
+          <span style="color:var(--muted);">Total servicios</span>
+          <span style="font-family:'Playfair Display',serif;color:var(--text);">${Math.round(w.svcs*mul)} servicios · ${Math.round(w.svcs*mul/Math.max(w.svcCli,1)).toFixed(0)} clientes est.</span>
+        </div>
+      </div>
+    </div>`;}).join('');
+}
+
+function toggleDetail(id,btn){
+  const el=document.getElementById(id);
+  const isVis=el.classList.toggle('vis');
+  btn.textContent=isVis?'▲ Ocultar servicios':'▼ Ver servicios por categoría';
+}
+
+// ══════════════════════════════════════════════
+//  P5 · OBJETIVOS
+// ══════════════════════════════════════════════
+function renderObj(){
+  const mul=getPeriodMul('obj');
+  const periodLbl=PERIOD_LABELS[curPeriods['obj']];
+  const fac=Math.round((parseFloat(document.getElementById('facInput').value)||0)*mul);
+  const rows=getExp(CUR_SALON,4);
+  const bcm=byCatMap(rows);
+
+  document.getElementById('obj-wrap').innerHTML=OBJ_DEF.map((obj,idx)=>{
+    const real=Math.round((bcm[obj.key]||0)*mul);
+    const limEur=fac*(obj.max/100);
+    const realPct=fac?real/fac*100:0;
+    const barW=fac?Math.min(realPct/obj.max*100,130):0;
+    let status='ok';
+    if(obj.min&&realPct<obj.min)status='warn';
+    else if(realPct>obj.max)status='bad';
+    else if(realPct>obj.max*.86)status='warn';
+    const diff=limEur-real;
+    const slbl=status==='ok'?'✓ Dentro del objetivo':status==='warn'?'⚡ Revisar':'✗ Excedido';
+    const scls=`sb-${status}`,fcls=`${status}-f`;
+    const advice=status==='ok'
+      ?`Margen disponible de <strong>€${fmt(diff)}</strong> (${periodLbl.toLowerCase()}). Bien gestionado.`
+      :obj.min&&realPct<obj.min
+      ?`Por debajo del mínimo recomendado (${obj.min}%). ¿Está el equipo bien dimensionado?`
+      :`Excedido en <strong>€${fmt(-diff)}</strong>. Ajusta la partida.`;
+    return`<div class="ocard" style="animation-delay:${idx*.08}s;">
+      <div class="ocard-hdr">
+        <div><div class="otitle">${obj.ic} ${obj.lbl}</div><div class="odesc">${obj.desc}</div></div>
+        <div class="sbadge ${scls}">${slbl}</div>
+      </div>
+      <div class="onums">
+        <div class="onum"><div class="onum-l">Gasto real</div><div class="onum-v">€${fmt(real)}</div><div class="onum-n">${realPct.toFixed(1)}% s/facturación</div></div>
+        <div class="onum"><div class="onum-l">Límite (${obj.max}%)</div><div class="onum-v" style="color:var(--burg)">€${fmt(limEur)}</div><div class="onum-n">Máximo recomendado</div></div>
+        <div class="onum"><div class="onum-l">Diferencia</div>
+          <div class="onum-v" style="color:${diff>=0?'var(--positive)':'var(--red)'}">
+            ${diff>=0?'+':'−'}€${fmt(Math.abs(diff))}</div>
+          <div class="onum-n">${diff>=0?'Margen':'Exceso'}</div></div>
+      </div>
+      <div class="otrack"><div class="ofill ${fcls}" style="width:${Math.min(barW,100)}%;"></div></div>
+      <div class="oxlbls"><span>0%</span><span>${obj.max}% límite · actual ${realPct.toFixed(1)}%</span><span>${obj.max}%+</span></div>
+      <div class="oadvice">${advice}</div>
+    </div>`;}).join('');
+}
+
+// ══════════════════════════════════════════════
+//  P_SERVICIOS · SERVICIOS & CITAS
+// ══════════════════════════════════════════════
+
+// Datos extendidos de trabajadoras: visitas reales (agrupadas) vs citas GHL
+// Cada cita = 1 entrada en GHL, pero varias citas del mismo día = 1 visita real
+// visitasReales = clientes únicos que vinieron; citasGHL = nº de citas registradas
+const SVC_WORKERS=[
+  {n:'Naroa González', role:'Estilista Senior',
+   visitasR:26, citasGHL:34, svcs:34, facServ:2140, prod:12, facProd:320,
+   cats:[{n:'Coloración',qty:14,rev:980,c:'#c9b89a'},{n:'Corte',qty:12,rev:600,c:'#dddaba'},{n:'Tratamientos',qty:8,rev:560,c:'#8aad6e'}]},
+  {n:'Lucía Martínez', role:'Estilista',
+   visitasR:22, citasGHL:28, svcs:28, facServ:1680, prod:10, facProd:280,
+   cats:[{n:'Corte',qty:13,rev:650,c:'#dddaba'},{n:'Coloración',qty:9,rev:720,c:'#c9b89a'},{n:'Manicura',qty:6,rev:310,c:'#b01a1c'}]},
+  {n:'Sara López', role:'Colorista',
+   visitasR:17, citasGHL:21, svcs:21, facServ:1340, prod:8, facProd:180,
+   cats:[{n:'Coloración',qty:14,rev:980,c:'#c9b89a'},{n:'Tratamientos',qty:5,rev:240,c:'#8aad6e'},{n:'Corte',qty:2,rev:120,c:'#dddaba'}]},
+  {n:'María Ruiz', role:'Esteticista',
+   visitasR:14, citasGHL:18, svcs:18, facServ:980, prod:5, facProd:100,
+   cats:[{n:'Manicura',qty:10,rev:480,c:'#b01a1c'},{n:'Tratamientos',qty:5,rev:340,c:'#8aad6e'},{n:'Maquillaje',qty:3,rev:160,c:'#7a2a45'}]},
+  {n:'Carmen Soto', role:'Recepcionista',
+   visitasR:12, citasGHL:14, svcs:14, facServ:660, prod:2, facProd:0,
+   cats:[{n:'Corte',qty:8,rev:360,c:'#dddaba'},{n:'Peinado',qty:6,rev:300,c:'#c9b89a'}]},
+  {n:'Isabel Vega', role:'Aprendiz',
+   visitasR:8, citasGHL:8, svcs:8, facServ:340, prod:1, facProd:20,
+   cats:[{n:'Corte básico',qty:8,rev:340,c:'#dddaba'}]},
+];
+
+// Facturación mensual servicios (base enero→mayo, resto estimado)
+const SVC_FAC_MES=[4200,4580,5020,5540,5840,5400,5100,4400,4800,5200,5600,5900];
+
+function renderServicios(){
+  const mul=getPeriodMul('svc');
+  const mi=parseInt(document.getElementById('svcMon').value);
+  const s=SALONES[CUR_SALON];
+
+  // Si hay datos reales de la API los usamos, si no usamos los de ejemplo
+  let totVisitas, totCitas, totSvcs, totFacServ, totProds, totFacProd, totFac, ticketMedio, svcPorVisita;
+  let workersData = SVC_WORKERS; // fallback
+  let productosData = [];
+
+  if(GHL_DATA && GHL_DATA.kpis){
+    const k = GHL_DATA.kpis;
+    totVisitas  = k.visitasReales;
+    totCitas    = k.totalCitas;
+    totSvcs     = k.totalSvcs;
+    totFacServ  = k.totalFacServ;
+    totProds    = k.totalProds;
+    totFacProd  = k.totalFacProd;
+    totFac      = k.totalFac;
+    ticketMedio = k.ticketMedio;
+    svcPorVisita= k.svcPorVisita;
+    workersData = GHL_DATA.workers || [];
+    productosData = GHL_DATA.productos || [];
+  } else {
+    totVisitas  = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.visitasR,0)*mul);
+    totCitas    = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.citasGHL,0)*mul);
+    totSvcs     = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.svcs,0)*mul);
+    totFacServ  = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facServ,0)*mul);
+    totProds    = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.prod,0)*mul);
+    totFacProd  = Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facProd,0)*mul);
+    totFac      = totFacServ+totFacProd;
+    ticketMedio = totVisitas?totFacServ/totVisitas:0;
+    svcPorVisita= totVisitas?totSvcs/totVisitas:0;
+  }
+
+  // KPIs
+  const kpis=[
+    {lbl:'📅 Visitas reales',v:fmt(totVisitas),note:'Clientas únicas · agrupadas por día',cls:'cream-c'},
+    {lbl:'📋 Citas en GHL',v:fmt(totCitas),note:'Registros individuales en calendario',cls:''},
+    {lbl:'✂️ Servicios vendidos',v:fmt(totSvcs),note:'De calendario · total',cls:''},
+    {lbl:'📐 Servicios / visita',v:fmtD(svcPorVisita),note:'Media real por visita agrupada',cls:'green-c'},
+    {lbl:'🎯 Ticket medio',v:`<span class="cur">€</span>${fmtD(ticketMedio)}`,note:'Sobre visitas reales · sin distorsión',cls:'gold-c'},
+    {lbl:'🧴 Productos vendidos',v:fmt(totProds),note:'Unidades de inventario',cls:''},
+    {lbl:'✂️ Fac. servicios',v:`<span class="cur">€</span>${fmt(totFacServ)}`,note:'Calendario',cls:'burg-c'},
+    {lbl:'🧴 Fac. productos',v:`<span class="cur">€</span>${fmt(totFacProd)}`,note:'Inventario',cls:''},
+    {lbl:'💰 Total facturado',v:`<span class="cur">€</span>${fmt(totFac)}`,note:'Servicios + productos',cls:'gold-c'},
+  ];
+  document.getElementById('svc-kpis').innerHTML=kpis.map((k,i)=>`
+    <div class="card ${k.cls||''}" style="animation-delay:${i*.05}s">
+      <div class="clbl">${k.lbl}</div>
+      <div class="cval">${k.v}</div>
+      <div class="cnote">${k.note}</div>
+    </div>`).join('');
+
+  // ─── Tabla Servicios ───
+  let htmlServ='';
+  SVC_WORKERS.forEach(w=>{
+    const vis=Math.round(w.visitasR*mul);
+    const cit=Math.round(w.citasGHL*mul);
+    const svcs=Math.round(w.svcs*mul);
+    const fac=Math.round(w.facServ*mul);
+    const svcVis=vis?(svcs/vis).toFixed(1):'-';
+    const tick=vis?Math.round(fac/vis):0;
+    const ini=w.n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    htmlServ+=`<tr>
+      <td><span class="svc-avatar">${ini}</span>${w.n}
+        <div style="font-size:10px;color:var(--muted);margin-left:38px;margin-top:1px;">${w.role}</div>
+      </td>
+      <td class="r"><strong>${vis}</strong></td>
+      <td class="r"><span class="visit-chip">${cit}</span></td>
+      <td class="r"><span class="svc-badge s">${svcs}</span></td>
+      <td class="r">${svcVis}</td>
+      <td class="r">€${fmt(fac)}</td>
+      <td class="r">€${tick}</td>
+    </tr>`;
+  });
+  const tSvcV=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.visitasR,0)*mul);
+  const tSvcC=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.citasGHL,0)*mul);
+  const tSvcS=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.svcs,0)*mul);
+  const tSvcF=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facServ,0)*mul);
+  const tSvcSV=tSvcV?(tSvcS/tSvcV).toFixed(1):'-';
+  const tSvcT=tSvcV?Math.round(tSvcF/tSvcV):0;
+  htmlServ+=`<tr class="svc-total">
+    <td>Total</td>
+    <td class="r">${tSvcV}</td>
+    <td class="r">${tSvcC}</td>
+    <td class="r">${tSvcS}</td>
+    <td class="r">${tSvcSV}</td>
+    <td class="r">€${fmt(tSvcF)}</td>
+    <td class="r">€${tSvcT}</td>
+  </tr>`;
+  document.getElementById('svc-tbody-serv').innerHTML=htmlServ;
+
+  // ─── Tabla Productos ───
+  let htmlProd='';
+  const tProdF=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facProd,0)*mul);
+  SVC_WORKERS.forEach(w=>{
+    const prods=Math.round(w.prod*mul);
+    const fac=Math.round(w.facProd*mul);
+    const pct=tProdF?((fac/tProdF)*100).toFixed(1):0;
+    const tick=prods?Math.round(fac/prods):0;
+    const ini=w.n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    htmlProd+=`<tr>
+      <td><span class="svc-avatar">${ini}</span>${w.n}
+        <div style="font-size:10px;color:var(--muted);margin-left:38px;margin-top:1px;">${w.role}</div>
+      </td>
+      <td class="r"><span class="svc-badge p">${prods}</span></td>
+      <td class="r">€${fmt(fac)}</td>
+      <td class="r">${pct}%</td>
+      <td class="r">€${tick||'-'}</td>
+    </tr>`;
+  });
+  const tProdU=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.prod,0)*mul);
+  const tProdTick=tProdU?Math.round(tProdF/tProdU):0;
+  htmlProd+=`<tr class="svc-total">
+    <td>Total</td>
+    <td class="r">${tProdU}</td>
+    <td class="r">€${fmt(tProdF)}</td>
+    <td class="r">100%</td>
+    <td class="r">€${tProdTick}</td>
+  </tr>`;
+  document.getElementById('svc-tbody-prod').innerHTML=htmlProd;
+
+  // ─── Tabla Total ───
+  let htmlTot='';
+  const tTotAll=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facServ+w.facProd,0)*mul);
+  SVC_WORKERS.forEach(w=>{
+    const facS=Math.round(w.facServ*mul);
+    const facP=Math.round(w.facProd*mul);
+    const facT=facS+facP;
+    const pct=tTotAll?((facT/tTotAll)*100).toFixed(1):0;
+    const ini=w.n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    htmlTot+=`<tr>
+      <td><span class="svc-avatar">${ini}</span>${w.n}
+        <div style="font-size:10px;color:var(--muted);margin-left:38px;margin-top:1px;">${w.role}</div>
+      </td>
+      <td class="r">€${fmt(facS)}</td>
+      <td class="r">€${fmt(facP)}</td>
+      <td class="r"><strong>€${fmt(facT)}</strong></td>
+      <td class="r">${pct}%</td>
+    </tr>`;
+  });
+  const tTotS=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facServ,0)*mul);
+  const tTotP=Math.round(SVC_WORKERS.reduce((a,w)=>a+w.facProd,0)*mul);
+  htmlTot+=`<tr class="svc-total">
+    <td>Total</td>
+    <td class="r">€${fmt(tTotS)}</td>
+    <td class="r">€${fmt(tTotP)}</td>
+    <td class="r">€${fmt(tTotAll)}</td>
+    <td class="r">100%</td>
+  </tr>`;
+  document.getElementById('svc-tbody-tot').innerHTML=htmlTot;
+
+  // ─── Gráfico mensual facturación servicios ───
+  const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const facMesData=SVC_FAC_MES.map((v,i)=>Math.round(v*(i<=mi?1:FAC_FACTORS[i])));
+  const maxFM=Math.max(...facMesData);
+  document.getElementById('svc-monthly').innerHTML=meses.map((m,i)=>`
+    <div class="hrow">
+      <div class="hn" style="${i===mi?'color:var(--burg);font-weight:700;':''}">${m}${i===mi?' ◀':''}</div>
+      <div class="ht"><div class="hf" style="width:${Math.round(facMesData[i]/maxFM*100)}%;background:${i===mi?'var(--burg)':'rgba(68,23,40,.35)'};"></div></div>
+      <div class="hv" style="color:${i===mi?'var(--burg)':'var(--text)'};">€${fmt(facMesData[i])}</div>
+    </div>`).join('');
+
+  // ─── Gráfico categorías ───
+  const cats=s.cats;
+  const maxCat=Math.max(...cats.map(c=>c.rev));
+  document.getElementById('svc-cats').innerHTML=cats.map(c=>`
+    <div class="hrow">
+      <div class="hn">${c.n}</div>
+      <div class="ht"><div class="hf" style="width:${Math.round(c.rev/maxCat*100)}%;background:${c.c};opacity:.85;"></div></div>
+      <div style="display:flex;gap:8px;">
+        <span class="hv" style="color:${c.c};min-width:55px;text-align:right;">€${fmt(Math.round(c.rev*mul))}</span>
+        <span class="hv" style="color:var(--muted);min-width:26px;">${Math.round(c.qty*mul)}</span>
+      </div>
+    </div>`).join('');
+}
+
+function showSvcTab(name, btn){
+  ['servicios','productos','total'].forEach(t=>{
+    document.getElementById('svctab-'+t).style.display=t===name?'':'none';
+  });
+  document.querySelectorAll('.svc-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+// Intenta conectar con el servidor Railway.
+// Si no está configurado, usa datos de ejemplo.
+if(API_URL && !API_URL.includes('TU-SERVIDOR')){
+  loadLocations();
+} else {
+  renderResumen();
+  renderEvolucion();
+  renderWorkers();
+  renderObj();
+  renderServicios();
+}
+</script>
+</body>
+</html>
