@@ -1,0 +1,15 @@
+name: Vallore Daily Snapshot
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Guardar snapshot diario Vallore
+        run: |
+          curl -s "https://vallore-proxy.onrender.com/cron/snapshot?secret=vallore-cron-2026"
+          echo "Snapshot completado: $(date)"
