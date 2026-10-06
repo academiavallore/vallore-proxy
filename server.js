@@ -374,7 +374,8 @@ app.get('/dashboard', async (req, res) => {
         items.forEach(item => {
           const nombre     = item.name || item.productName || 'Sin nombre';
           const qty        = parseFloat(item.qty || item.quantity || 1);
-          const importe    = parseFloat(item.amount || (parseFloat(item.unitPrice || item.price || 0) * qty) || 0);
+          const unitPrice  = parseFloat(item.amount || item.unitPrice || item.price || 0);
+          const importe    = unitPrice * qty;
           const trabajadora = stripHtml(item.description || item.notes || item.memo || '') || 'Sin asignar';
           
           // Detectar si es producto: el nombre empieza por "Producto"
@@ -758,7 +759,8 @@ async function procesarSalonMes(loc, locationKey, year, month, customStart, cust
       items.forEach(item => {
         const nombre = item.name || item.productName || 'Sin nombre';
         const qty = parseFloat(item.qty || item.quantity || 1);
-        const importe = parseFloat(item.amount || (parseFloat(item.unitPrice||0)*qty) || 0);
+        const unitPrice = parseFloat(item.amount || item.unitPrice || 0);
+        const importe = unitPrice * qty;
         const trabajadora = stripHtml(item.description || item.notes || '') || 'Sin asignar';
         const esProducto = nombre.toLowerCase().startsWith('producto');
 
