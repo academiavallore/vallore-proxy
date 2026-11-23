@@ -371,11 +371,22 @@ app.get('/dashboard', async (req, res) => {
         categoriasMap[cat].qty += 1;
         categoriasMap[cat].rev += paid;
       } else {
+        // Si la factura tiene descuento (o recargo) a nivel de factura, GHL no reparte
+        // ese ajuste entre las lineas: item.amount sigue siendo el precio de lista.
+        // Escalamos cada linea proporcionalmente para que la suma coincida con lo
+        // realmente pagado (paid), igual que ya hace el KPI de facturacion total.
+        const rawTotalFactura = items.reduce((acc, it) => {
+          const q = parseFloat(it.qty || it.quantity || 1);
+          const u = parseFloat(it.amount || it.unitPrice || it.price || 0);
+          return acc + (u * q);
+        }, 0);
+        const factorDescuento = rawTotalFactura > 0 ? (paid / rawTotalFactura) : 1;
+
         items.forEach(item => {
           const nombre     = item.name || item.productName || 'Sin nombre';
           const qty        = parseFloat(item.qty || item.quantity || 1);
           const unitPrice  = parseFloat(item.amount || item.unitPrice || item.price || 0);
-          const importe    = unitPrice * qty;
+          const importe    = unitPrice * qty * factorDescuento;
           const trabajadora = stripHtml(item.description || item.notes || item.memo || '') || 'Sin asignar';
           
           // Detectar si es producto: el nombre empieza por "Producto"
@@ -756,11 +767,19 @@ async function procesarSalonMes(loc, locationKey, year, month, customStart, cust
       categoriasMap['Servicio'].qty += 1;
       categoriasMap['Servicio'].rev += paid;
     } else {
+      // Mismo ajuste de descuento proporcional que en /dashboard (ver comentario alli).
+      const rawTotalFactura = items.reduce((acc, it) => {
+        const q = parseFloat(it.qty || it.quantity || 1);
+        const u = parseFloat(it.amount || it.unitPrice || 0);
+        return acc + (u * q);
+      }, 0);
+      const factorDescuento = rawTotalFactura > 0 ? (paid / rawTotalFactura) : 1;
+
       items.forEach(item => {
         const nombre = item.name || item.productName || 'Sin nombre';
         const qty = parseFloat(item.qty || item.quantity || 1);
         const unitPrice = parseFloat(item.amount || item.unitPrice || 0);
-        const importe = unitPrice * qty;
+        const importe = unitPrice * qty * factorDescuento;
         const trabajadora = stripHtml(item.description || item.notes || '') || 'Sin asignar';
         const esProducto = nombre.toLowerCase().startsWith('producto');
 
